@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SisVenda - Sistema de Vendas</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-cash-register"></i> SisVenda</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-page="dashboard">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </a>
+            <a href="#" class="nav-item" data-page="vendas">
+                <i class="fas fa-shopping-cart"></i> PDV / Vendas
+            </a>
+            <a href="#" class="nav-item" data-page="produtos">
+                <i class="fas fa-box"></i> Produtos
+            </a>
+            <a href="#" class="nav-item" data-page="clientes">
+                <i class="fas fa-users"></i> Clientes
+            </a>
+            <a href="#" class="nav-item" data-page="relatorios">
+                <i class="fas fa-file-alt"></i> Relatórios
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <div class="topbar">
+            <h1 id="page-title">Dashboard</h1>
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <span>Administrador</span>
+            </div>
+        </div>
+
+        <!-- Pages Container -->
+        <div class="pages-container">
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="page active">
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <div class="card-icon" style="background: #4CAF50;">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="card-info">
+                            <h3>Vendas Hoje</h3>
+                            <p id="vendas-hoje">0</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon" style="background: #2196F3;">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="card-info">
+                            <h3>Valor Total Hoje</h3>
+                            <p id="valor-hoje">R$ 0,00</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon" style="background: #FF9800;">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="card-info">
+                            <h3>Produtos</h3>
+                            <p id="total-produtos">0</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon" style="background: #9C27B0;">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="card-info">
+                            <h3>Clientes</h3>
+                            <p id="total-clientes">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-20">
+                    <h3>Últimas Vendas</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Cliente</th>
+                                    <th>Data</th>
+                                    <th>Valor</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ultimas-vendas">
+                                <tr>
+                                    <td colspan="5">Nenhuma venda registrada</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vendas Page (PDV) -->
+            <div id="vendas-page" class="page">
+                <div class="pdv-container">
+                    <div class="pdv-left">
+                        <div class="card">
+                            <h3>Buscar Produto</h3>
+                            <div class="search-box">
+                                <input type="text" id="buscar-produto" placeholder="Código ou nome do produto...">
+                                <button onclick="buscarProduto()"><i class="fas fa-search"></i></button>
+                            </div>
+                            <div id="resultado-busca" class="mt-10"></div>
+                        </div>
+
+                        <div class="card mt-20">
+                            <h3>Carrinho</h3>
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Produto</th>
+                                            <th>Qtd</th>
+                                            <th>Preço</th>
+                                            <th>Subtotal</th>
+                                            <th>Ação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="carrinho-body">
+                                        <tr>
+                                            <td colspan="5">Carrinho vazio</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="carrinho-total mt-10">
+                                <h3>Total: <span id="carrinho-total">R$ 0,00</span></h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pdv-right">
+                        <div class="card">
+                            <h3>Finalizar Venda</h3>
+                            <div class="form-group">
+                                <label>Cliente:</label>
+                                <select id="cliente-venda">
+                                    <option value="">Venda sem cliente</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Forma de Pagamento:</label>
+                                <select id="forma-pagamento">
+                                    <option value="dinheiro">Dinheiro</option>
+                                    <option value="cartao_credito">Cartão de Crédito</option>
+                                    <option value="cartao_debito">Cartão de Débito</option>
+                                    <option value="pix">PIX</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-success btn-full" onclick="finalizarVenda()">
+                                <i class="fas fa-check"></i> Finalizar Venda
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produtos Page -->
+            <div id="produtos-page" class="page">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Gerenciar Produtos</h3>
+                        <button class="btn btn-primary" onclick="mostrarFormProduto()">
+                            <i class="fas fa-plus"></i> Novo Produto
+                        </button>
+                    </div>
+                    <div id="form-produto" class="form-card hidden">
+                        <h4 id="form-produto-titulo">Novo Produto</h4>
+                        <input type="hidden" id="produto-id">
+                        <div class="form-group">
+                            <label>Código:</label>
+                            <input type="text" id="produto-codigo" placeholder="Código do produto">
+                        </div>
+                        <div class="form-group">
+                            <label>Nome:</label>
+                            <input type="text" id="produto-nome" placeholder="Nome do produto">
+                        </div>
+                        <div class="form-group">
+                            <label>Descrição:</label>
+                            <textarea id="produto-descricao" placeholder="Descrição do produto"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Preço:</label>
+                                <input type="number" id="produto-preco" step="0.01" placeholder="0.00">
+                            </div>
+                            <div class="form-group">
+                                <label>Estoque:</label>
+                                <input type="number" id="produto-estoque" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Categoria:</label>
+                            <input type="text" id="produto-categoria" placeholder="Categoria">
+                        </div>
+                        <div class="form-buttons">
+                            <button class="btn btn-success" onclick="salvarProduto()">
+                                <i class="fas fa-save"></i> Salvar
+                            </button>
+                            <button class="btn btn-secondary" onclick="cancelarFormProduto()">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-container mt-20">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nome</th>
+                                    <th>Preço</th>
+                                    <th>Estoque</th>
+                                    <th>Categoria</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="produtos-body">
+                                <tr>
+                                    <td colspan="6">Carregando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clientes Page -->
+            <div id="clientes-page" class="page">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Gerenciar Clientes</h3>
+                        <button class="btn btn-primary" onclick="mostrarFormCliente()">
+                            <i class="fas fa-plus"></i> Novo Cliente
+                        </button>
+                    </div>
+                    <div id="form-cliente" class="form-card hidden">
+                        <h4 id="form-cliente-titulo">Novo Cliente</h4>
+                        <input type="hidden" id="cliente-id">
+                        <div class="form-group">
+                            <label>Nome:</label>
+                            <input type="text" id="cliente-nome" placeholder="Nome do cliente">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Email:</label>
+                                <input type="email" id="cliente-email" placeholder="Email">
+                            </div>
+                            <div class="form-group">
+                                <label>Telefone:</label>
+                                <input type="text" id="cliente-telefone" placeholder="Telefone">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>CPF:</label>
+                            <input type="text" id="cliente-cpf" placeholder="CPF">
+                        </div>
+                        <div class="form-group">
+                            <label>Endereço:</label>
+                            <input type="text" id="cliente-endereco" placeholder="Endereço">
+                        </div>
+                        <div class="form-buttons">
+                            <button class="btn btn-success" onclick="salvarCliente()">
+                                <i class="fas fa-save"></i> Salvar
+                            </button>
+                            <button class="btn btn-secondary" onclick="cancelarFormCliente()">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-container mt-20">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Telefone</th>
+                                    <th>CPF</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientes-body">
+                                <tr>
+                                    <td colspan="5">Carregando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Relatórios Page -->
+            <div id="relatorios-page" class="page">
+                <div class="card">
+                    <h3>Relatório de Vendas</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Data Início:</label>
+                            <input type="date" id="data-inicio">
+                        </div>
+                        <div class="form-group">
+                            <label>Data Fim:</label>
+                            <input type="date" id="data-fim">
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-primary mt-20" onclick="gerarRelatorio()">
+                                <i class="fas fa-search"></i> Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+                    <div id="resultado-relatorio" class="mt-20">
+                        <div class="resumo-relatorio">
+                            <div class="resumo-item">
+                                <strong>Total de Vendas:</strong>
+                                <span id="rel-total-vendas">0</span>
+                            </div>
+                            <div class="resumo-item">
+                                <strong>Valor Total:</strong>
+                                <span id="rel-valor-total">R$ 0,00</span>
+                            </div>
+                        </div>
+                        <div class="table-container mt-20">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Cliente</th>
+                                        <th>Data</th>
+                                        <th>Valor</th>
+                                        <th>Pagamento</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="relatorio-body">
+                                    <tr>
+                                        <td colspan="6">Selecione as datas e gere o relatório</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Detalhes da Venda -->
+    <div id="modal-venda" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal()">&times;</span>
+            <h2>Detalhes da Venda</h2>
+            <div id="detalhes-venda-content"></div>
+        </div>
+    </div>
+
+    <!-- Toast de Notificação -->
+    <div id="toast" class="toast"></div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
